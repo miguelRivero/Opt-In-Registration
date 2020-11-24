@@ -1,28 +1,36 @@
 <script lang="ts">
-	let name: string = 'world';
+  const optInText =
+    window.registrationContent[getMarket()].contactMethodsLabel[getLang()];
+  const label = document.querySelector(".contact-methods__label");
+  let documentObserver = new MutationObserver(function (mutations) {
+    if (document.body.contains(label)) {
+      label.innerHTML = optInText;
+      documentObserver.disconnect();
+    }
+  });
+
+  documentObserver.observe(document, {
+    attributes: false,
+    childList: true,
+    characterData: false,
+    subtree: true,
+  });
+
+  function getMarket() {
+    return window.config.defaults.addressCountry;
+  }
+  function getLang() {
+    if (!window.config) {
+      console.log("AB - window.config not found");
+    }
+    const ns = window.config.padl.namespace;
+    if (!ns) {
+      console.log("AB - padl.namespace not found");
+    }
+    const dataLayer = window[ns].dataLayer;
+    if (!dataLayer) {
+      console.log("AB - window[ns].dataLayer not found");
+    }
+    return window[ns].dataLayer.page.page.pageInfo.language;
+  }
 </script>
-
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
-
-<style lang="scss">
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-
-		h1 {
-			color: #ff3e00;
-			text-transform: uppercase;
-			font-size: 4em;
-			font-weight: 100;
-		}
-
-		@media (min-width: 640px) {
-			max-width: none;
-		}
-	}
-</style>
