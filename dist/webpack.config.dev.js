@@ -37,7 +37,7 @@ var useBabel = true;
  * as it will greatly speed up your builds.
  */
 
-var useBabelInDevelopment = false;
+var useBabelInDevelopment = true;
 /**
  * One or more stylesheets to compile and add to the beginning of the bundle. By default, SASS, SCSS and CSS files are
  * supported. The order of this array is important, as the order of outputted styles will match. Svelte component
@@ -125,7 +125,14 @@ module.exports = {
   plugins: [new MiniCssExtractPlugin({
     filename: "[name].css"
   })],
-  optimization: {
+  optimization: prod ? {
+    splitChunks: {
+      chunks: "all",
+      minSize: 18000,
+      maxSize: 20000
+    },
+    minimizer: []
+  } : {
     minimizer: []
   },
   devtool: prod && !sourceMapsInProduction ? false : "source-map"
@@ -194,13 +201,13 @@ if (useBabel && (prod || useBabelInDevelopment)) {
       options: {
         exclude: ["node_modules/@babel/**", "node_modules/core-js/**"],
         sourceType: "unambiguous",
-        presets: [["@babel/preset-env", {
-          targets: "> 0.25%, not dead",
+        presets: [["@babel/env", {
+          targets: "ie 11",
+          loose: true,
           useBuiltIns: "entry",
-          corejs: 3,
-          loose: true
+          corejs: 3
         }]],
-        plugins: ["@babel/plugin-syntax-dynamic-import", ["@babel/plugin-transform-runtime", {
+        plugins: ["@babel/plugin-syntax-dynamic-import", ["@babel/transform-runtime", {
           useESModules: true
         }]]
       }

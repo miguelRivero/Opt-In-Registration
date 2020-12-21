@@ -1,10 +1,65 @@
 <script lang="ts">
-  const optInText =
-    window.registrationContent[getMarket()].contactMethodsLabel[getLang()];
-  const label = document.querySelector(".contact-methods__label");
+  const copyContent = window.registrationContent[getMarket()];
+  const contactNewContent = `
+  <span class="contact-methods__label">${
+    copyContent["contactMethodsLabel"][getLang()]
+  }</span>
+  
+  <ul id="contact-method-list" class="contact-methods__list">
+   <li class="contact-method">
+      <input id="ta-registration-keep-me-informed" name="optins.contactMeans.emailAuthorized" class="contact-method__input" data-track-preference-name="Email" type="checkbox" value="true"><input type="hidden" name="_optins.contactMeans.emailAuthorized" value="on" style="">
+      <label for="ta-registration-keep-me-informed" class="keep-me-informed__label">
+        ${copyContent["contactMethods"][getLang()]["email"]}
+      </label>
+   </li>
+   <li class="contact-method">
+      <input id="phoneAuthorized" name="optins.contactMeans.phoneAuthorized" class="contact-method__input" data-track-preference-name="Phone" type="checkbox" value="true"><input type="hidden" name="_optins.contactMeans.phoneAuthorized" value="on" style="">
+      <label class="contact-method__label" for="phoneAuthorized">
+        ${copyContent["contactMethods"][getLang()]["call"]}
+      </label>
+   </li>
+   <li class="contact-method">
+      <input id="messagingAuthorized" name="optins.contactMeans.messagingAuthorized" class="contact-method__input" data-track-preference-name="SMS" type="checkbox" value="true"><input type="hidden" name="_optins.contactMeans.messagingAuthorized" value="on" style="">
+      <label class="contact-method__label" for="messagingAuthorized">
+        ${copyContent["contactMethods"][getLang()]["sms"]}
+      </label>
+   </li>
+</ul>
+<p class="contact-methods__clarification">${
+    copyContent["clarification1"][getLang()]
+  }</p>
+<p class="contact-methods__clarification">${
+    copyContent["clarification2"][getLang()]
+  }</p>
+<p class="contact-methods__clarification">${
+    copyContent["clarification3"][getLang()]
+  }</p>
+  `;
+
+  const formContainer = document.querySelector(
+    ".form-container.contact-methods"
+  ) as HTMLElement;
+
   let documentObserver = new MutationObserver(function (mutations) {
-    if (document.body.contains(label)) {
-      label.innerHTML = optInText;
+    if (document.body.contains(formContainer)) {
+      formContainer.innerHTML = contactNewContent;
+
+      // Some styling
+      document.getElementById("contact-method-list").style.margin = "0.5rem 0";
+
+      let clarifications = document.querySelectorAll(
+        ".contact-methods__clarification"
+      );
+      clarifications.forEach(function (item) {
+        item.style.fontSize = "0.625rem";
+        item.style.fontStyle = "italic";
+      });
+
+      // links
+      document
+        .getElementById("privacy-notice-legal-link")
+        .setAttribute("href", copyContent.privacyNoticeLegalLink);
+
       documentObserver.disconnect();
     }
   });

@@ -26,7 +26,7 @@ const useBabel = true;
  * only testing in modern browsers and don't need transpiling in development, it is recommended to keep this disabled
  * as it will greatly speed up your builds.
  */
-const useBabelInDevelopment = false;
+const useBabelInDevelopment = true;
 
 /**
  * One or more stylesheets to compile and add to the beginning of the bundle. By default, SASS, SCSS and CSS files are
@@ -133,9 +133,18 @@ module.exports = {
       filename: "[name].css",
     }),
   ],
-  optimization: {
-    minimizer: [],
-  },
+  optimization: prod
+    ? {
+        splitChunks: {
+          chunks: "all",
+          minSize: 18000,
+          maxSize: 20000,
+        },
+        minimizer: [],
+      }
+    : {
+        minimizer: [],
+      },
   devtool: prod && !sourceMapsInProduction ? false : "source-map",
 };
 
@@ -217,19 +226,19 @@ if (useBabel && (prod || useBabelInDevelopment)) {
         sourceType: "unambiguous",
         presets: [
           [
-            "@babel/preset-env",
+            "@babel/env",
             {
-              targets: "> 0.25%, not dead",
+              targets: "ie 11",
+              loose: true,
               useBuiltIns: "entry",
               corejs: 3,
-              loose: true,
             },
           ],
         ],
         plugins: [
           "@babel/plugin-syntax-dynamic-import",
           [
-            "@babel/plugin-transform-runtime",
+            "@babel/transform-runtime",
             {
               useESModules: true,
             },

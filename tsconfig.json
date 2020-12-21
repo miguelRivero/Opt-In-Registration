@@ -10,6 +10,7 @@
 	"compilerOptions": {
 		"moduleResolution": "node",
 		"target": "es6",
+		"module": "commonjs",
 		"importsNotUsedAsValues": "remove",
 		"isolatedModules": true,
 		"esModuleInterop": true,
